@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Link Drive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Hind+Siliguri:wght@400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030603;
+            --panel: #0a120b;
+            --p2: #111d12;
+            --line: #1d3d24;
+            --g: #2dff7a;
+            --gd: #14a84f;
+            --ink: #d4f7de;
+            --mute: #85ad90;
+            --red: #ff5d73;
+            color-scheme: dark;
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px)
+        }
+
+        html {
+            scroll-padding-top: env(safe-area-inset-top, 0px);
+            background: var(--bg)
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg);
+            color: var(--ink);
+            font: 15px/1.5 "Share Tech Mono", "Hind Siliguri", ui-monospace, monospace
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0 0 auto;
+            height: env(safe-area-inset-top, 0px);
+            background: rgba(3, 6, 3, .95);
+            z-index: 30
+        }
+
+        button,
+        input,
+        textarea {
+            font: inherit;
+            color: inherit
+        }
+
+        button {
+            cursor: pointer
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--g);
+            outline-offset: 2px
+        }
+
+        header.top {
+            position: sticky;
+            top: env(safe-area-inset-top, 0px);
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 10px 20px;
+            background: rgba(3, 6, 3, .9);
+            backdrop-filter: blur(6px);
+            border-bottom: 1px solid var(--line)
+        }
+
+        .brand {
+            color: var(--g);
+            font-size: 18px;
+            white-space: nowrap
+        }
+
+        .brand i {
+            display: inline-block;
+            width: 9px;
+            height: 16px;
+            background: var(--g);
+            vertical-align: -2px;
+            margin-left: 4px;
+            animation: blink 1s steps(2) infinite
+        }
+
+        nav {
+            display: flex;
+            gap: 4px;
+            overflow-x: auto;
+            flex: 1
+        }
+
+        nav button {
+            background: none;
+            border: 0;
+            color: var(--mute);
+            padding: 6px 11px;
+            border-radius: 6px;
+            white-space: nowrap
+        }
+
+        nav button:hover {
+            color: var(--ink)
+        }
+
+        nav button.on {
+            color: var(--g);
+            background: var(--p2)
+        }
+
+        #main {
+            flex: 1;
+            display: flex;
+            flex-direction: column
+        }
+
+        .hero {
+            position: relative;
+            flex: 1;
+            min-height: calc(100vh - 140px);
+            display: grid;
+            place-items: center;
+            text-align: center;
+            overflow: hidden;
+            padding: 24px
+        }
+
+        .hero canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%
+        }
+
+        .box {
+            position: relative;
+            background: rgba(3, 6, 3, .78);
+            border: 1px solid var(--gd);
+            padding: 32px 24px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 0 40px rgba(45, 255, 122, .15)
+        }
+
+        .badge {
+            color: var(--g);
+            animation: blink 1.4s steps(2) infinite
+        }
+
+        .glitch {
+            position: relative;
+            margin: 10px 0 14px;
+            font-size: clamp(38px, 9vw, 88px);
+            line-height: 1;
+            color: var(--g);
+            font-weight: 400;
+            text-shadow: 0 0 14px rgba(45, 255, 122, .6);
+            animation: gl 3.2s infinite
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            inset: 0;
+            opacity: .7
+        }
+
+        .glitch::before {
+            color: #ff2a55;
+            clip-path: inset(0 0 60% 0);
+            transform: translate(-3px, 0);
+            animation: gl2 2.6s infinite
+        }
+
+        .glitch::after {
+            color: #25e6ff;
+            clip-path: inset(60% 0 0 0);
+            transform: translate(3px, 0);
+            animation: gl2 3.1s infinite reverse
+        }
+
+        .type {
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            margin: 0;
+            border-right: 2px solid var(--g);
+            width: 0;
+            animation: typing 2.6s steps(36) .4s forwards, blink2 .8s steps(2) infinite;
+            font-size: 15px
+        }
+
+        .stat {
+            color: var(--mute);
+            margin: 16px 0
+        }
+
+        .cta {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0
+            }
+        }
+
+        @keyframes blink2 {
+            50% {
+                border-color: transparent
+            }
+        }
+
+        @keyframes typing {
+            to {
+                width: 36ch
+            }
+        }
+
+        @keyframes gl {
+
+            0%,
+            90%,
+            100% {
+                transform: none
+            }
+
+            92% {
+                transform: translate(-3px, 1px) skewX(6deg)
+            }
+
+            95% {
+                transform: translate(3px, -1px)
+            }
+        }
+
+        @keyframes gl2 {
+
+            0%,
+            88%,
+            100% {
+                clip-path: inset(0 0 60% 0)
+            }
+
+            90% {
+                clip-path: inset(20% 0 40% 0)
+            }
+
+            94% {
+                clip-path: inset(55% 0 10% 0)
+            }
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+            * {
+                animation: none !important
+            }
+
+            .type {
+                width: 36ch
+            }
+        }
+
+        .wrap {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px
+        }
+
+        .bar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px
+        }
+
+        h2.pt {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 400;
+            color: var(--g);
+            flex: 1
+        }
+
+        .crumbs {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 2px;
+            flex: 1;
+            min-width: 200px
+        }
+
+        .crumb {
+            background: none;
+            border: 0;
+            color: var(--mute);
+            padding: 4px 7px;
+            border-radius: 6px;
+            font-size: 17px
+        }
+
+        .crumb:hover,
+        .crumb.over {
+            color: var(--g);
+            background: var(--p2)
+        }
+
+        .crumb:last-child {
+            color: var(--ink)
+        }
+
+        .sep {
+            color: var(--gd)
+        }
+
+        .btn {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            color: var(--ink);
+            border-radius: 8px;
+            padding: 8px 14px
+        }
+
+        .btn:hover {
+            border-color: var(--g)
+        }
+
+        .btn.pri {
+            background: var(--g);
+            color: #032010;
+            border-color: var(--g)
+        }
+
+        .btn.red {
+            background: var(--red);
+            color: #2a0308;
+            border-color: var(--red)
+        }
+
+        .in {
+            width: 100%;
+            padding: 9px 11px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--bg)
+        }
+
+        .search {
+            width: 200px
+        }
+
+        .list.grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 12px
+        }
+
+        .list.rows {
+            display: flex;
+            flex-direction: column;
+            gap: 6px
+        }
+
+        .card {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 12px;
+            min-width: 0
+        }
+
+        .grid .card {
+            align-items: stretch;
+            min-height: 124px;
+            padding: 14px
+        }
+
+        .card:hover {
+            border-color: var(--gd)
+        }
+
+        .card.dragging {
+            opacity: .35
+        }
+
+        .card.over {
+            border-color: var(--g);
+            box-shadow: 0 0 0 2px rgba(45, 255, 122, .35)
+        }
+
+        .card.before {
+            box-shadow: -5px 0 0 var(--g)
+        }
+
+        .main {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+            flex: 1;
+            color: inherit;
+            text-decoration: none;
+            background: none;
+            border: 0;
+            text-align: left;
+            padding: 0
+        }
+
+        .grid .main {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px
+        }
+
+        .tile {
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            background: var(--p2);
+            color: var(--g);
+            display: grid;
+            place-items: center;
+            flex: none;
+            font-size: 18px
+        }
+
+        .k-class .tile {
+            border: 1px solid var(--gd)
+        }
+
+        .k-class.done .tile {
+            background: var(--g);
+            color: #032010
+        }
+
+        .tx {
+            min-width: 0;
+            width: 100%
+        }
+
+        .nm {
+            overflow-wrap: anywhere;
+            font-size: 16px
+        }
+
+        .main:hover .nm {
+            color: var(--g)
+        }
+
+        .sub {
+            color: var(--mute);
+            font-size: 13px;
+            overflow-wrap: anywhere
+        }
+
+        .prog {
+            height: 4px;
+            background: var(--p2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 6px
+        }
+
+        .prog b {
+            display: block;
+            height: 100%;
+            background: var(--g)
+        }
+
+        .dots {
+            opacity: 0;
+            background: none;
+            border: 0;
+            color: var(--mute);
+            border-radius: 6px;
+            padding: 5px;
+            align-self: flex-start;
+            transition: opacity .12s
+        }
+
+        .grid .dots {
+            position: absolute;
+            top: 8px;
+            right: 8px
+        }
+
+        .rows .dots {
+            align-self: center
+        }
+
+        .card:hover .dots,
+        .card:focus-within .dots,
+        .dots[aria-expanded=true] {
+            opacity: 1
+        }
+
+        @media (hover:none) {
+            .dots {
+                opacity: 1
+            }
+        }
+
+        .dots:hover {
+            background: var(--p2);
+            color: var(--g)
+        }
+
+        .empty {
+            grid-column: 1/-1;
+            border: 1px dashed var(--gd);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--mute)
+        }
+
+        .menu {
+            position: fixed;
+            z-index: 50;
+            display: none;
+            background: var(--panel);
+            border: 1px solid var(--gd);
+            border-radius: 10px;
+            padding: 5px;
+            min-width: 190px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .7)
+        }
+
+        .menu button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: 0;
+            padding: 8px 10px;
+            border-radius: 6px
+        }
+
+        .menu button:hover,
+        .menu button:focus-visible {
+            background: var(--p2);
+            color: var(--g)
+        }
+
+        .menu .red {
+            color: var(--red)
+        }
+
+        dialog {
+            border: 1px solid var(--gd);
+            border-radius: 14px;
+            background: var(--panel);
+            color: var(--ink);
+            padding: 20px;
+            width: min(440px, 92vw)
+        }
+
+        dialog::backdrop {
+            background: rgba(0, 0, 0, .75)
+        }
+
+        dialog h3 {
+            margin: 0 0 10px;
+            font-weight: 400;
+            font-size: 19px;
+            color: var(--g)
+        }
+
+        label {
+            display: block;
+            color: var(--mute);
+            font-size: 14px;
+            margin: 10px 0 4px
+        }
+
+        .acts {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 16px
+        }
+
+        .err {
+            color: var(--red);
+            min-height: 20px;
+            margin-top: 6px;
+            font-size: 14px
+        }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+            transform: translateX(-50%);
+            background: var(--g);
+            color: #032010;
+            padding: 8px 16px;
+            border-radius: 8px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s;
+            z-index: 60
+        }
+
+        .toast.on {
+            opacity: 1
+        }
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 14px 20px;
+            border-top: 1px solid var(--line);
+            color: var(--mute);
+            font-size: 13px;
+            background: var(--bg)
+        }
+
+        footer button {
+            background: none;
+            border: 0;
+            color: var(--g);
+            padding: 0;
+            text-decoration: underline
+        }
+
+        body.auth-mode {
+            min-height: 100vh
+        }
+
+        .auth-mode header.top,
+        .auth-mode #main,
+        .auth-mode footer {
+            display: none
+        }
+
+        #authScreen {
+            display: none;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+            isolation: isolate;
+            background:
+                radial-gradient(ellipse at 75% 45%, rgba(20, 168, 79, .15), transparent 40%),
+                linear-gradient(135deg, #030603 0%, #07110a 52%, #030603 100%)
+        }
+
+        .auth-mode #authScreen {
+            display: flex
+        }
+
+        #authScreen::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            opacity: .18;
+            background-image: linear-gradient(rgba(45, 255, 122, .15) 1px, transparent 1px), linear-gradient(90deg, rgba(45, 255, 122, .15) 1px, transparent 1px);
+            background-size: 42px 42px;
+            mask-image: linear-gradient(transparent, black 18%, black 80%, transparent)
+        }
+
+        .auth-shell {
+            width: min(1060px, 100%);
+            min-height: 590px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border: 1px solid rgba(45, 255, 122, .38);
+            background: rgba(4, 10, 6, .85);
+            box-shadow: 0 28px 100px rgba(0, 0, 0, .58), 0 0 55px rgba(45, 255, 122, .08);
+            backdrop-filter: blur(14px)
+        }
+
+        .auth-copy {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: clamp(28px, 6vw, 72px);
+            position: relative;
+            z-index: 1
+        }
+
+        .auth-mark {
+            color: var(--g);
+            letter-spacing: .18em;
+            font-size: 13px
+        }
+
+        .auth-title {
+            color: var(--ink);
+            font-size: clamp(32px, 5vw, 52px);
+            line-height: 1.08;
+            font-weight: 400;
+            margin: 24px 0 14px
+        }
+
+        .auth-title span {
+            color: var(--g);
+            text-shadow: 0 0 22px rgba(45, 255, 122, .35)
+        }
+
+        .auth-description {
+            color: var(--mute);
+            max-width: 390px
+        }
+
+        .auth-terminal {
+            border-left: 2px solid var(--g);
+            padding: 7px 0 7px 14px;
+            margin-top: 34px;
+            color: var(--mute);
+            font-size: 13px
+        }
+
+        .auth-terminal b {
+            color: var(--g);
+            font-weight: 400
+        }
+
+        .auth-visual {
+            min-height: 590px;
+            display: grid;
+            place-items: center;
+            perspective: 900px;
+            overflow: hidden;
+            position: relative;
+            border-left: 1px solid rgba(45, 255, 122, .16);
+            background: radial-gradient(ellipse, rgba(45, 255, 122, .1), transparent 66%)
+        }
+
+        .auth-orbit {
+            width: min(360px, 78vw);
+            aspect-ratio: 1;
+            border: 1px solid rgba(45, 255, 122, .25);
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            transform: rotateX(62deg) rotateZ(-22deg);
+            box-shadow: 0 0 40px rgba(45, 255, 122, .08), inset 0 0 40px rgba(45, 255, 122, .06);
+            animation: orbit 18s linear infinite
+        }
+
+        .auth-orbit::before,
+        .auth-orbit::after {
+            content: "";
+            position: absolute;
+            inset: 13%;
+            border: 1px dashed rgba(45, 255, 122, .34);
+            border-radius: 50%
+        }
+
+        .auth-orbit::after {
+            inset: 27%;
+            border-style: solid;
+            opacity: .6
+        }
+
+        .auth-core {
+            width: 132px;
+            height: 132px;
+            position: absolute;
+            display: grid;
+            place-items: center;
+            color: var(--g);
+            font-size: 42px;
+            border: 1px solid var(--g);
+            background: rgba(4, 18, 9, .9);
+            box-shadow: 0 0 40px rgba(45, 255, 122, .2), inset 0 0 26px rgba(45, 255, 122, .12);
+            transform: rotateX(-62deg) rotateZ(22deg);
+            clip-path: polygon(50% 0, 92% 24%, 100% 50%, 92% 76%, 50% 100%, 8% 76%, 0 50%, 8% 24%)
+        }
+
+        .auth-orbit-label {
+            position: absolute;
+            bottom: 14%;
+            color: var(--mute);
+            font-size: 12px;
+            letter-spacing: .24em
+        }
+
+        .auth-form-wrap {
+            width: min(410px, 100%)
+        }
+
+        .auth-side {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 36px
+        }
+
+        .auth-side .auth-visual {
+            width: 100%;
+            min-height: 300px;
+            border: 0
+        }
+
+        .auth-form-wrap h2 {
+            color: var(--g);
+            font-weight: 400;
+            margin: 0 0 5px;
+            font-size: 26px
+        }
+
+        .auth-form-wrap > p {
+            color: var(--mute);
+            margin: 0 0 24px;
+            font-size: 13px
+        }
+
+        .auth-form-wrap label {
+            margin-top: 14px
+        }
+
+        .auth-form-wrap .in {
+            margin-top: 5px
+        }
+
+        .password-field {
+            position: relative
+        }
+
+        .password-field .in {
+            padding-right: 48px
+        }
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 8px;
+            transform: translateY(-50%);
+            display: grid;
+            place-items: center;
+            width: 34px;
+            height: 34px;
+            border: 0;
+            border-radius: 6px;
+            background: transparent;
+            color: var(--mute)
+        }
+
+        .password-toggle:hover {
+            color: var(--g);
+            background: var(--p2)
+        }
+
+        .password-toggle svg {
+            width: 19px;
+            height: 19px
+        }
+
+        .auth-submit {
+            width: 100%;
+            margin-top: 22px;
+            min-height: 44px;
+            letter-spacing: .08em
+        }
+
+        .auth-toggle {
+            color: var(--mute);
+            text-align: center;
+            margin-top: 17px;
+            font-size: 13px
+        }
+
+        .auth-toggle button {
+            background: none;
+            border: 0;
+            color: var(--g);
+            padding: 3px
+        }
+
+        #authMessage {
+            min-height: 22px;
+            margin-top: 12px;
+            color: var(--red);
+            font-size: 13px
+        }
+
+        #authMessage.ok {
+            color: var(--g)
+        }
+
+        .session-user {
+            color: var(--mute);
+            font-size: 13px;
+            overflow-wrap: anywhere
+        }
+
+        @keyframes orbit {
+            to {
+                transform: rotateX(62deg) rotateZ(338deg)
+            }
+        }
+
+        @media (max-width:640px) {
+            header.top {
+                flex-wrap: wrap;
+                gap: 6px;
+                padding: 8px 12px
+            }
+
+            nav {
+                flex-basis: 100%
+            }
+
+            .search {
+                width: 100%
+            }
+
+            .wrap {
+                padding: 14px
+            }
+
+            #authScreen {
+                padding: 16px
+            }
+
+            .auth-shell {
+                grid-template-columns: 1fr;
+                min-height: 0
+            }
+
+            .auth-copy {
+                padding: 32px 24px 18px
+            }
+
+            .auth-title {
+                margin-top: 16px
+            }
+
+            .auth-terminal {
+                margin-top: 18px
+            }
+
+            .auth-visual {
+                min-height: 230px;
+                border-left: 0;
+                border-top: 1px solid rgba(45, 255, 122, .16)
+            }
+
+            .auth-side {
+                padding: 12px 24px 28px
+            }
+
+            .auth-side .auth-visual {
+                min-height: 220px
+            }
+
+            .auth-orbit {
+                width: 180px
+            }
+
+            .auth-core {
+                width: 82px;
+                height: 82px;
+                font-size: 28px
+            }
+
+            .auth-orbit-label {
+                bottom: 8%
+            }
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+            .auth-orbit {
+                animation: none
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <section id="authScreen" aria-label="Account sign in">
+        <div class="auth-shell">
+            <div class="auth-copy">
+                <div class="auth-mark">LINK DRIVE <span aria-hidden="true">///</span> PRIVATE ACCESS</div>
+                <h1 class="auth-title">Your links.<br><span>Your space.</span></h1>
+                <p class="auth-description">Sign in to securely reach your classes and resources from any device.</p>
+                <div class="auth-terminal"><b>&gt; AUTHENTICATION REQUIRED</b><br>&gt; verified identity / user-scoped storage</div>
+            </div>
+            <div class="auth-side">
+                <div class="auth-visual" aria-hidden="true">
+                    <div class="auth-orbit"><div class="auth-core">⌘</div></div>
+                    <div class="auth-orbit-label">SECURE NODE // 01</div>
+                </div>
+                <div class="auth-form-wrap">
+                    <h2 id="authTitle">Welcome back</h2>
+                    <p id="authHint">Enter your credentials to access your private drive.</p>
+                    <form id="authForm">
+                        <label for="authEmail">Email address</label>
+                        <input class="in" id="authEmail" name="email" type="email" autocomplete="email" required>
+                        <label for="authPassword">Password</label>
+                        <div class="password-field">
+                            <input class="in" id="authPassword" name="password" type="password" autocomplete="current-password" minlength="8" required>
+                            <button class="password-toggle" id="passwordToggle" type="button" aria-label="Show password" aria-pressed="false">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                        <button class="btn pri auth-submit" id="authSubmit" type="submit">Sign in</button>
+                    </form>
+                    <div id="authMessage" role="status" aria-live="polite"></div>
+                    <div class="auth-toggle"><span id="authToggleText">New here?</span> <button id="authToggle" type="button">Create account</button></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <header class="top">
+        <div class="brand">Develop by :_@Razaul<i></i></div>
+        <nav aria-label="Main"><button data-p="home">Home</button><button data-p="drive">My Drive</button><button
+                data-p="courses">Courses</button><button data-p="starred">Starred</button><button
+                data-p="trash">Trash</button></nav>
+        <span class="session-user" id="sessionUser"></span><button class="btn" id="signOut" type="button">Sign out</button>
+    </header>
+    <main id="main"></main>
+    <footer><span>© 2026 Link Drive. Private cloud storage: <span id="cloudStatus">Not configured</span></span><span><button id="bk">Backup and
+                restore</button></span></footer>
+    <dialog id="dlg">
+        <form id="df" novalidate>
+            <h3 id="dt"></h3>
+            <div id="dfl"></div>
+            <div class="err" id="de" role="alert"></div>
+            <div class="acts"><button type="button" class="btn" id="dc">Cancel</button><button type="submit"
+                    class="btn pri" id="dk">Save</button></div>
+        </form>
+    </dialog>
+    <script>
+        (function () {
+            var KEY = "linkdrive.v2", CLOUD_URL = "https://thsifoufbrzjwplkmrwe.supabase.co", CLOUD_ANON_KEY = "sb_publishable_JxPK1UxCaTYuWhKkGwgc7Q_6RtuTP5z", AUTH_KEY = "linkdrive.auth.v1", AUTH = { session: null, mode: "signin" }, S = { items: [], page: "home", cur: null, view: "grid", q: "" }, drag = null, timer = null, menuBtn = null, resolver = null, defs = [], cloudTimer = null, cloudQueue = Promise.resolve(), cloudSyncAvailable = true;
+            function uid() { return Math.random().toString(36).slice(2, 10) }
+            function by(id) { return S.items.find(function (i) { return i.id === id }) }
+            function localKey() { return KEY + "." + (AUTH.session && AUTH.session.user ? AUTH.session.user.id : "signed-out") }
+            function loadLocal() {
+                try {
+                    var r = localStorage.getItem(localKey()); if (r) { var d = JSON.parse(r); if (Array.isArray(d.items)) { S.items = d.items; S.view = d.view || "grid"; return } }
+                } catch (e) { console.error("Could not load saved browser data.", e) }
+            }
+            function cloudReady() {
+                try {
+                    var u = new URL(CLOUD_URL);
+                    return /^https?:$/.test(u.protocol) && !!u.hostname && !u.search && !u.hash &&
+                        (u.hostname === "localhost" || u.hostname.indexOf(".") > -1) &&
+                        CLOUD_ANON_KEY.length >= 20 && !/YOUR-|PLACEHOLDER|^anon$/i.test(CLOUD_ANON_KEY)
+                } catch (e) { return false }
+            }
+            function cloudBaseUrl() {
+                return CLOUD_URL.replace(/\/+$/, "").replace(/\/(?:rest|auth)\/v1$/i, "")
+            }
+            function cloudStatus(text) { var s = document.getElementById("cloudStatus"); if (s) s.textContent = text }
+            function setAuthMessage(text, ok) {
+                var m = document.getElementById("authMessage");
+                m.textContent = text || "";
+                m.classList.toggle("ok", !!ok)
+            }
+            function cloudErrorMessage(error) {
+                var message = error && error.message ? error.message : "";
+                if (/linkdrive_user_data|schema cache|PGRST205/i.test(message)) {
+                    return "Your login succeeded, but the Supabase data table is missing. Run supabase_setup.sql in the SQL Editor of the project configured in CLOUD_URL, then reload this page."
+                }
+                return message || "Could not connect to cloud storage. Check the project URL, API key, and network."
+            }
+            function showAuth() {
+                document.body.classList.add("auth-mode");
+                document.getElementById("sessionUser").textContent = "";
+                document.getElementById("authEmail").focus()
+            }
+            function authMode(mode) {
+                AUTH.mode = mode;
+                var signup = mode === "signup";
+                document.getElementById("authTitle").textContent = signup ? "Create your account" : "Welcome back";
+                document.getElementById("authHint").textContent = signup ? "Create a private account for your Link Drive." : "Enter your credentials to access your private drive.";
+                document.getElementById("authSubmit").textContent = signup ? "Create account" : "Sign in";
+                document.getElementById("authToggleText").textContent = signup ? "Already registered?" : "New here?";
+                document.getElementById("authToggle").textContent = signup ? "Sign in" : "Create account";
+                document.getElementById("authPassword").autocomplete = signup ? "new-password" : "current-password";
+                setAuthMessage("")
+            }
+            function authRequest(path, method, body, accessToken) {
+                var headers = { apikey: CLOUD_ANON_KEY, "Content-Type": "application/json" };
+                if (accessToken) headers.Authorization = "Bearer " + accessToken;
+                return fetch(cloudBaseUrl() + path, {
+                    method: method,
+                    headers: headers,
+                    body: body ? JSON.stringify(body) : undefined
+                }).then(function (r) {
+                    return r.text().then(function (text) {
+                        var data = text ? JSON.parse(text) : null;
+                        if (!r.ok) throw new Error(data && (data.msg || data.message || data.error_description || data.error) || "Authentication service returned HTTP " + r.status);
+                        return data
+                    })
+                })
+            }
+            function persistSession(session) {
+                AUTH.session = session;
+                try { localStorage.setItem(AUTH_KEY, JSON.stringify(session)) }
+                catch (e) { console.error("Could not persist the login session.", e); throw new Error("Could not save your login session in this browser.") }
+            }
+            function clearSession() {
+                AUTH.session = null;
+                try { localStorage.removeItem(AUTH_KEY) }
+                catch (e) { console.error("Could not clear the saved login session.", e) }
+            }
+            function saveSessionResponse(data) {
+                if (!data || !data.access_token || !data.refresh_token || !data.user) throw new Error("The authentication service returned an incomplete session.");
+                data.expires_at = Date.now() + (data.expires_in || 3600) * 1000;
+                persistSession(data)
+            }
+            async function refreshSession() {
+                if (!AUTH.session || !AUTH.session.refresh_token) return false;
+                var data = await authRequest("/auth/v1/token?grant_type=refresh_token", "POST", { refresh_token: AUTH.session.refresh_token });
+                saveSessionResponse(data);
+                return true
+            }
+            async function cloudRequest(method, body) {
+                if (AUTH.session.expires_at < Date.now() + 60000) await refreshSession();
+                if (!AUTH.session || !AUTH.session.user) return Promise.reject(new Error("Sign in before accessing cloud storage."));
+                var userId = AUTH.session.user.id, url = cloudBaseUrl() + "/rest/v1/linkdrive_user_data";
+                if (method === "GET") url += "?user_id=eq." + encodeURIComponent(userId) + "&select=items";
+                else url += "?on_conflict=user_id";
+                var headers = {
+                    apikey: CLOUD_ANON_KEY,
+                    Authorization: "Bearer " + AUTH.session.access_token,
+                    "Content-Type": "application/json",
+                    Prefer: "resolution=merge-duplicates,return=minimal"
+                };
+                return fetch(url, {
+                    method: method,
+                    headers: headers,
+                    body: body ? JSON.stringify(body) : undefined
+                }).then(function (r) {
+                    return r.text().then(function (text) {
+                        var data = text ? JSON.parse(text) : null;
+                        if (!r.ok) throw new Error(data && (data.message || data.hint || data.details) || "Cloud storage returned HTTP " + r.status);
+                        return method === "GET" ? data : null
+                    })
+                })
+            }
+            function cloudLoad() {
+                return cloudRequest("GET").then(function (rows) {
+                    if (rows.length && Array.isArray(rows[0].items)) S.items = rows[0].items;
+                    else S.items = [];
+                    saveLocal();
+                })
+            }
+            function cloudWrite(items) {
+                return cloudRequest("POST", { user_id: AUTH.session.user.id, items: items })
+            }
+            function queueCloudSave() {
+                if (!cloudReady() || !cloudSyncAvailable || !AUTH.session) return;
+                cloudStatus("Saving securely…");
+                clearTimeout(cloudTimer);
+                cloudTimer = setTimeout(function () {
+                    var snapshot = S.items.slice(), userId = AUTH.session && AUTH.session.user.id;
+                    cloudQueue = cloudQueue.then(function () {
+                        if (!AUTH.session || AUTH.session.user.id !== userId) return;
+                        return cloudWrite(snapshot)
+                    }).then(function () {
+                        if (AUTH.session && AUTH.session.user.id === userId) cloudStatus("Private cloud · synced")
+                    }).catch(function (e) {
+                        console.error("Could not sync private cloud data.", e);
+                        cloudStatus("Cloud sync failed");
+                        toast("Cloud save failed. Check the setup and connection.")
+                    })
+                }, 500)
+            }
+            function saveLocal() {
+                try { localStorage.setItem(localKey(), JSON.stringify({ items: S.items, view: S.view })) }
+                catch (e) { console.error("Could not save data in this browser.", e); toast("Browser storage failed") }
+            }
+            function save() {
+                saveLocal();
+                queueCloudSave()
+            }
+            function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e }
+            var P = { folder: '<path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2.5h8.5A1.5 1.5 0 0 1 21 9v8.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/>', book: '<path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H19v14H5.5A1.5 1.5 0 0 0 4 19.5zM4 19.5A1.5 1.5 0 0 0 5.5 21H19"/>', link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>', dots: '<circle cx="12" cy="5" r="1.7" fill="currentColor"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><circle cx="12" cy="19" r="1.7" fill="currentColor"/>' };
+            function ic(n, s) { s = s || 22; return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + P[n] + '</svg>' }
+            function live(i) { while (i) { if (i.trash) return false; i = by(i.parent) } return true }
+            function kids(p) { return S.items.filter(function (i) { return i.parent === p && !i.trash }) }
+            function pad(n) { return n < 10 ? "0" + n : "" + n }
+            function cno(i) { var n = 0; kids(i.parent).some(function (x) { if (x.kind === "class") n++; return x === i }); return n || 1 }
+            function label(i) { return i.kind === "class" ? "Class " + pad(cno(i)) + (i.name ? ": " + i.name : "") : i.name }
+            function host(u) { try { return new URL(u).hostname.replace(/^www\./, "") } catch (e) { return u } }
+            function inside(t, d) { while (t) { if (t === d) return true; t = by(t.parent) } return false }
+            function dsc(id, o) { S.items.forEach(function (x) { if (x.parent === id) { o.push(x.id); dsc(x.id, o) } }); return o }
+            function mvEnd(d, p) { d.parent = p; S.items.splice(S.items.indexOf(d), 1); S.items.push(d) }
+
+            /* dialog */
+            var dlg = document.getElementById("dlg"), dfl = document.getElementById("dfl"), de = document.getElementById("de"), dk = document.getElementById("dk");
+            function ask(o) {
+                return new Promise(function (res) {
+                    resolver = res; defs = o.fields || []; document.getElementById("dt").textContent = o.title; dfl.innerHTML = ""; de.textContent = "";
+                    if (o.text) { var p = el("p", null, o.text); p.style.margin = "0"; dfl.appendChild(p) }
+                    defs.forEach(function (f, i) { var l = el("label", null, f.label); l.htmlFor = "f" + i; var x = f.multi ? el("textarea", "in") : el("input", "in"); if (f.multi) x.rows = f.rows || 2; x.id = "f" + i; x.value = f.value || ""; if (f.ph) x.placeholder = f.ph; dfl.appendChild(l); dfl.appendChild(x) });
+                    dk.textContent = o.ok || "Save"; dk.className = "btn " + (o.danger ? "red" : "pri"); if (!dlg.open) dlg.showModal(); var f1 = dfl.querySelector("input,textarea"); if (f1) f1.focus(); else dk.focus()
+                })
+            }
+            function cd(v) { if (dlg.open) dlg.close(); var r = resolver; resolver = null; if (r) r(v) }
+            document.getElementById("dc").onclick = function () { cd(null) };
+            dlg.addEventListener("cancel", function (e) { e.preventDefault(); cd(null) });
+            document.getElementById("df").addEventListener("submit", function (e) {
+                e.preventDefault(); var out = {};
+                for (var i = 0; i < defs.length; i++) {
+                    var f = defs[i], v = document.getElementById("f" + i).value.trim();
+                    if (f.required && !v) { de.textContent = f.label + " is required."; return }
+                    if (f.url && v) { if (!/^[a-z][a-z0-9+.-]*:/i.test(v)) v = "https://" + v; try { var u = new URL(v); if (!/^https?:/.test(u.protocol)) throw 0 } catch (x) { de.textContent = "Enter a valid web address, like https://example.com"; return } }
+                    out[f.key] = v
+                } cd(out)
+            });
+
+            /* toast + menu */
+            var tt = el("div", "toast"); tt.setAttribute("role", "status"); document.body.appendChild(tt);
+            function toast(s) { tt.textContent = s; tt.classList.add("on"); clearTimeout(tt.t); tt.t = setTimeout(function () { tt.classList.remove("on") }, 2200) }
+            var menu = el("div", "menu"); document.body.appendChild(menu);
+            function closeMenu() { menu.style.display = "none"; if (menuBtn) { menuBtn.removeAttribute("aria-expanded"); menuBtn = null } }
+            function openMenu(list, x, y, btn) {
+                closeMenu(); menu.innerHTML = ""; list.forEach(function (m) { var b = el("button", m.red ? "red" : "", m.t); b.type = "button"; b.onclick = function () { closeMenu(); m.f() }; menu.appendChild(b) });
+                menu.style.display = "block"; var w = menu.offsetWidth, h = menu.offsetHeight; menu.style.left = Math.max(6, Math.min(x, innerWidth - w - 6)) + "px"; menu.style.top = Math.max(6, Math.min(y, innerHeight - h - 6)) + "px";
+                if (btn) { btn.setAttribute("aria-expanded", "true"); menuBtn = btn } var f = menu.querySelector("button"); if (f) f.focus()
+            }
+            document.addEventListener("mousedown", function (e) { if (!menu.contains(e.target)) closeMenu() });
+            document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeMenu() });
+            window.addEventListener("scroll", closeMenu, true);
+
+            /* actions */
+            async function create(kind, parent) {
+                var f = kind === "link" ? [{ key: "name", label: "Title", required: true }, { key: "url", label: "Web address", required: true, url: true, ph: "https://" }, { key: "note", label: "Note (optional)", multi: true }] : [{ key: "name", label: kind === "class" ? "Class title (optional)" : kind === "course" ? "Course name" : "Folder name", required: kind !== "class" }];
+                var T = { folder: "New folder", course: "New course", class: "New class (numbered automatically)", link: "Add link" };
+                var r = await ask({ title: T[kind], fields: f, ok: kind === "link" ? "Add link" : "Create" }); if (!r) return;
+                S.items.push({ id: uid(), kind: kind, name: r.name || "", url: r.url || "", note: r.note || "", parent: parent, star: false, done: false }); save(); render(); toast("Created")
+            }
+            async function edit(i) {
+                var f = i.kind === "link" ? [{ key: "name", label: "Title", value: i.name, required: true }, { key: "url", label: "Web address", value: i.url, required: true, url: true }, { key: "note", label: "Note (optional)", value: i.note, multi: true }] : [{ key: "name", label: i.kind === "class" ? "Class title (optional)" : "Name", value: i.name, required: i.kind !== "class" }];
+                var r = await ask({ title: i.kind === "link" ? "Edit link" : "Rename", fields: f, ok: "Save changes" }); if (!r) return; i.name = r.name; if (i.kind === "link") { i.url = r.url; i.note = r.note } save(); render()
+            }
+            function openItem(i) { S.page = "drive"; S.cur = i.id; S.q = ""; render(); scrollTo(0, 0) }
+            function toTrash(i) { i.trash = true; save(); render(); toast("Moved to trash") }
+            function restore(i) { i.trash = false; if (i.parent && !live(by(i.parent))) i.parent = null; save(); render(); toast("Restored") }
+            async function purge(list) {
+                var r = await ask({ title: "Delete forever?", text: list.length === 1 ? "“" + label(list[0]) + "” and everything inside it will be deleted. This cannot be undone." : "Everything in the trash will be deleted. This cannot be undone.", ok: "Delete forever", danger: true }); if (!r) return;
+                var ids = []; list.forEach(function (i) { ids.push(i.id); dsc(i.id, ids) }); S.items = S.items.filter(function (x) { return ids.indexOf(x.id) < 0 }); save(); render(); toast("Deleted")
+            }
+            function menuFor(i) {
+                if (i.trash) return [{ t: "Restore", f: function () { restore(i) } }, { t: "Delete forever", red: 1, f: function () { purge([i]) } }];
+                var m = [];
+                if (i.kind === "link") m.push({ t: "Open link", f: function () { window.open(i.url, "_blank", "noopener") } }); else m.push({ t: "Open", f: function () { openItem(i) } });
+                m.push({ t: i.kind === "link" ? "Edit link" : "Rename", f: function () { edit(i) } });
+                if (i.kind === "course") m.push({ t: "Add class", f: function () { create("class", i.id) } });
+                if (i.kind === "class" || i.kind === "folder") m.push({ t: "Add link", f: function () { create("link", i.id) } });
+                if (i.kind === "class") m.push({ t: i.done ? "Mark not done" : "Mark done", f: function () { i.done = !i.done; save(); render() } });
+                m.push({ t: i.star ? "Remove star" : "Add star", f: function () { i.star = !i.star; save(); render() } });
+                m.push({ t: "Move to trash", red: 1, f: function () { toTrash(i) } }); return m
+            }
+
+            /* drag and drop */
+            function isBefore(e, d) { return e.clientX < d.getBoundingClientRect().left + 36 }
+            function drop(T, before) {
+                var D = drag; drag = null; if (!D || D === T) return;
+                var same = D.kind === T.kind && (D.kind === "class" || D.kind === "course");
+                if (!before && !same && T.kind !== "link" && !inside(T, D)) { mvEnd(D, T.id); toast("Moved into " + label(T)) }
+                else { if (inside(T, D)) return; S.items.splice(S.items.indexOf(D), 1); S.items.splice(S.items.indexOf(T), 0, D); D.parent = T.parent }
+                save(); render()
+            }
+
+            /* cards */
+            function card(i) {
+                var tr = !!i.trash, link = i.kind === "link" && !tr;
+                var d = el("div", "card k-" + i.kind + (i.done ? " done" : "")); d.draggable = !tr && !S.q && S.page !== "starred";
+                var mn = link ? el("a", "main") : tr ? el("div", "main") : el("button", "main");
+                if (link) { mn.href = i.url; mn.target = "_blank"; mn.rel = "noopener noreferrer"; mn.draggable = false } else if (!tr) { mn.type = "button"; mn.onclick = function () { openItem(i) } }
+                var t = el("div", "tile"); if (i.kind === "class") t.textContent = pad(cno(i)); else t.innerHTML = ic(i.kind === "link" ? "link" : i.kind === "course" ? "book" : "folder");
+                var tx = el("div", "tx"); tx.appendChild(el("div", "nm", label(i)));
+                var n = kids(i.id), sub;
+                if (i.kind === "link") sub = host(i.url) + (i.note ? " - " + i.note : "");
+                else if (i.kind === "course") { var cl = n.filter(function (k) { return k.kind === "class" }), dn = cl.filter(function (k) { return k.done }).length; sub = dn + " of " + cl.length + " classes done" }
+                else if (i.kind === "class") sub = n.length + (n.length === 1 ? " resource" : " resources") + (i.done ? " (done)" : "");
+                else sub = n.length + (n.length === 1 ? " item" : " items");
+                tx.appendChild(el("div", "sub", (i.star ? "★ " : "") + sub));
+                if (i.kind === "course" && cl.length) { var pg = el("div", "prog"), b = el("b"); b.style.width = Math.round(dn / cl.length * 100) + "%"; pg.appendChild(b); tx.appendChild(pg) }
+                mn.appendChild(t); mn.appendChild(tx); d.appendChild(mn);
+                var db = el("button", "dots"); db.type = "button"; db.innerHTML = ic("dots", 18); db.setAttribute("aria-label", "More actions for " + label(i));
+                db.onclick = function (e) { e.stopPropagation(); var r = db.getBoundingClientRect(); openMenu(menuFor(i), r.right - 190, r.bottom + 4, db) }; d.appendChild(db);
+                d.oncontextmenu = function (e) { e.preventDefault(); openMenu(menuFor(i), e.clientX, e.clientY) };
+                d.ondragstart = function (e) { drag = i; e.dataTransfer.effectAllowed = "move"; try { e.dataTransfer.setData("text/plain", i.id) } catch (x) { } d.classList.add("dragging") };
+                d.ondragend = function () { drag = null; d.classList.remove("dragging"); document.querySelectorAll(".over,.before").forEach(function (x) { x.classList.remove("over", "before") }) };
+                d.ondragover = function (e) { if (!drag || drag === i) return; e.preventDefault(); var b = isBefore(e, d); d.classList.toggle("before", b); d.classList.toggle("over", !b) };
+                d.ondragleave = function () { d.classList.remove("over", "before") };
+                d.ondrop = function (e) { e.preventDefault(); var b = isBefore(e, d); d.classList.remove("over", "before"); drop(i, b) };
+                return d
+            }
+
+            /* pages */
+            function crumbs() {
+                var path = [], c = by(S.cur); while (c) { path.unshift(c); c = by(c.parent) }
+                var box = el("div", "crumbs"); box.setAttribute("aria-label", "Path");
+                function add(txt, id) {
+                    var b = el("button", "crumb", txt); b.type = "button"; b.onclick = function () { S.cur = id; S.q = ""; render() };
+                    b.ondragover = function (e) { if (drag) { e.preventDefault(); b.classList.add("over") } }; b.ondragleave = function () { b.classList.remove("over") };
+                    b.ondrop = function (e) { e.preventDefault(); b.classList.remove("over"); var D = drag; drag = null; if (!D || D.parent === id || (id && inside(by(id), D))) return; mvEnd(D, id); save(); render(); toast("Moved") }; box.appendChild(b)
+                }
+                add("My Drive", null); path.forEach(function (p) { box.appendChild(el("span", "sep", "/")); add(label(p), p.id) }); return box
+            }
+            function pageList() {
+                var q = S.q.toLowerCase(), a;
+                if (S.page === "trash") return S.items.filter(function (i) { return i.trash });
+                a = S.items.filter(live);
+                if (q) return a.filter(function (i) { return (label(i) + " " + (i.url || "") + " " + (i.note || "")).toLowerCase().indexOf(q) > -1 });
+                if (S.page === "drive") return a.filter(function (i) { return i.parent === S.cur });
+                if (S.page === "starred") return a.filter(function (i) { return i.star });
+                return a.filter(function (i) { return i.kind === "course" })
+            }
+            var EMPTY = { drive: "This folder is empty. Use New to add a folder, course, class or link.", courses: "No courses yet. Create a course, then add numbered classes inside it.", starred: "No starred items. Open the ⋮ menu on any item and choose Add star.", trash: "The trash is empty." };
+            function drivePage(m) {
+                var w = el("div", "wrap"), bar = el("div", "bar"), list = el("div", "list");
+                if (S.page === "drive" && !S.q) bar.appendChild(crumbs()); else bar.appendChild(el("h2", "pt", S.q ? "Search results" : { courses: "Courses", starred: "Starred", trash: "Trash" }[S.page] || "My Drive"));
+                var s = el("input", "in search"); s.type = "search"; s.placeholder = "Search"; s.value = S.q; s.setAttribute("aria-label", "Search");
+                s.oninput = function () { var was = !!S.q; S.q = s.value; if (was !== !!S.q) { render(); var n = document.querySelector(".search"); n.focus(); n.setSelectionRange(n.value.length, n.value.length) } else fill() };
+                if (S.page !== "trash") bar.appendChild(s);
+                var vb = el("button", "btn", S.view === "grid" ? "List view" : "Grid view"); vb.onclick = function () { S.view = S.view === "grid" ? "list" : "grid"; save(); render() }; bar.appendChild(vb);
+                if (S.page === "drive") { var nb = el("button", "btn pri", "+ New"); nb.onclick = function () { var r = nb.getBoundingClientRect(); openMenu([{ t: "New folder", f: function () { create("folder", S.cur) } }, { t: "New course", f: function () { create("course", S.cur) } }, { t: "New class (auto number)", f: function () { create("class", S.cur) } }, { t: "Add link", f: function () { create("link", S.cur) } }], r.left, r.bottom + 4, nb) }; bar.appendChild(nb) }
+                if (S.page === "courses") { var cb = el("button", "btn pri", "+ New course"); cb.onclick = function () { create("course", null) }; bar.appendChild(cb) }
+                if (S.page === "trash") { var eb = el("button", "btn red", "Empty trash"); eb.onclick = function () { var t = S.items.filter(function (i) { return i.trash }); if (t.length) purge(t); else toast("Trash is already empty") }; bar.appendChild(eb) }
+                function fill() {
+                    list.innerHTML = ""; list.className = "list " + (S.view === "grid" ? "grid" : "rows"); var a = pageList();
+                    if (!a.length) { list.appendChild(el("div", "empty", S.q ? "Nothing matches your search." : EMPTY[S.page])); return }
+                    a.forEach(function (i) { list.appendChild(card(i)) })
+                }
+                fill(); w.appendChild(bar); w.appendChild(list); m.appendChild(w)
+            }
+            function rain(cv) {
+                var x = cv.getContext("2d"), fs = 16, ys = [];
+                function size() { cv.width = cv.clientWidth; cv.height = cv.clientHeight; ys = []; for (var i = 0; i < Math.ceil(cv.width / fs); i++)ys.push(cv.height + Math.random() * cv.height) }
+                function step() {
+                    x.fillStyle = "rgba(0,0,0,.09)"; x.fillRect(0, 0, cv.width, cv.height); x.font = fs + "px 'Share Tech Mono',monospace";
+                    for (var i = 0; i < ys.length; i++) { x.fillStyle = "#2dff7a"; x.fillText(Math.random() < .5 ? "0" : "1", i * fs, ys[i]); ys[i] -= fs; if (ys[i] < 0 && Math.random() > .97) ys[i] = cv.height + Math.random() * 60 }
+                }
+                size(); window.onresize = size; x.fillStyle = "#000"; x.fillRect(0, 0, cv.width, cv.height);
+                if (matchMedia("(prefers-reduced-motion: reduce)").matches) { for (var k = 0; k < 45; k++)step(); return }
+                timer = setInterval(step, 60)
+            }
+            function home(m) {
+                var h = el("section", "hero"), cv = el("canvas"), b = el("div", "box"); cv.setAttribute("aria-hidden", "true");
+                b.innerHTML = '<div class="badge">[ ACCESS GRANTED ]</div><h1 class="glitch" data-text="WELCOME">WELCOME</h1><p class="type">&gt; courses, classes, links: one place</p><p class="stat"></p><div class="cta"></div>';
+                var L = S.items.filter(live), c = function (k) { return L.filter(function (i) { return i.kind === k }).length };
+                b.querySelector(".stat").textContent = "courses: " + c("course") + "   classes: " + c("class") + "   links: " + c("link");
+                var cta = b.querySelector(".cta"), a = el("button", "btn pri", "Open My Drive"), z = el("button", "btn", "View courses"); a.onclick = function () { go("drive") }; z.onclick = function () { go("courses") }; cta.appendChild(a); cta.appendChild(z);
+                h.appendChild(cv); h.appendChild(b); m.appendChild(h); rain(cv)
+            }
+            function render() {
+                clearInterval(timer); window.onresize = null; closeMenu(); var m = document.getElementById("main"); m.innerHTML = "";
+                document.querySelectorAll("nav button").forEach(function (b) { b.classList.toggle("on", b.dataset.p === S.page) });
+                if (S.page === "home") home(m); else drivePage(m)
+            }
+            function go(p) { S.page = p; if (p === "drive") S.cur = null; S.q = ""; render(); scrollTo(0, 0) }
+            document.querySelectorAll("nav button").forEach(function (b) { b.onclick = function () { go(b.dataset.p) } });
+            document.getElementById("bk").onclick = async function () {
+                var r = await ask({ title: "Backup and restore", text: "Copy this text to keep a backup. To restore, paste a backup here and press Restore.", fields: [{ key: "d", label: "Backup data", value: JSON.stringify(S.items), multi: true, rows: 6 }], ok: "Restore" }); if (!r) return;
+                try { var a = JSON.parse(r.d); if (!Array.isArray(a)) throw 0; S.items = a; save(); render(); toast("Backup restored") } catch (e) { toast("That backup text is not valid") }
+            };
+
+            document.getElementById("authToggle").onclick = function () {
+                authMode(AUTH.mode === "signin" ? "signup" : "signin")
+            };
+            document.getElementById("passwordToggle").onclick = function () {
+                var password = document.getElementById("authPassword"), toggle = this, visible = password.type === "password";
+                password.type = visible ? "text" : "password";
+                toggle.setAttribute("aria-label", visible ? "Hide password" : "Show password");
+                toggle.setAttribute("aria-pressed", visible ? "true" : "false")
+            };
+            document.getElementById("authForm").addEventListener("submit", async function (e) {
+                e.preventDefault();
+                if (window.location.protocol === "file:") {
+                    setAuthMessage("Supabase login cannot run from a file:// page. Open this site through an HTTP/HTTPS web server.");
+                    return
+                }
+                if (!cloudReady()) { setAuthMessage("Cloud login is not configured. Contact the site owner."); return }
+                var button = document.getElementById("authSubmit"), email = document.getElementById("authEmail").value.trim(), password = document.getElementById("authPassword").value;
+                button.disabled = true;
+                setAuthMessage(AUTH.mode === "signup" ? "Creating your account…" : "Signing in…");
+                try {
+                    var path = AUTH.mode === "signup" ? "/auth/v1/signup" : "/auth/v1/token?grant_type=password";
+                    var data = await authRequest(path, "POST", { email: email, password: password });
+                    if (!data.access_token) {
+                        setAuthMessage("Account created. Check your email to confirm it, then sign in.", true);
+                        return
+                    }
+                    saveSessionResponse(data);
+                    await enterPrivateDrive()
+                } catch (err) {
+                    console.error("Authentication failed.", err);
+                    setAuthMessage(cloudErrorMessage(err))
+                } finally {
+                    button.disabled = false
+                }
+            });
+            document.getElementById("signOut").onclick = async function () {
+                var token = AUTH.session && AUTH.session.access_token;
+                clearTimeout(cloudTimer);
+                try {
+                    if (token) await authRequest("/auth/v1/logout", "POST", null, token)
+                } catch (e) {
+                    console.error("Could not revoke the server session during sign out.", e)
+                }
+                clearSession();
+                S.items = [];
+                S.page = "home";
+                showAuth();
+                setAuthMessage("You have signed out.", true)
+            };
+
+            /* basic inspect deterrent */
+            document.addEventListener("contextmenu", function (e) {
+                var t = e.target;
+                if (t.closest && (t.closest(".card") || t.closest("input,textarea"))) return; // card-er nijer menu ar input-er jonno
+                e.preventDefault();
+            });
+            document.addEventListener("keydown", function (e) {
+                var c = e.ctrlKey || e.metaKey;
+                if (e.key === "F12" ||
+                    (c && e.shiftKey && ["KeyI", "KeyJ", "KeyC"].indexOf(e.code) > -1) ||
+                    (c && e.altKey && ["KeyI", "KeyJ", "KeyU"].indexOf(e.code) > -1) ||
+                    (c && e.code === "KeyU")) {
+                    e.preventDefault();
+                }
+            });
+            
+
+            async function enterPrivateDrive() {
+                if (!AUTH.session) throw new Error("Sign in to continue.");
+                loadLocal();
+                cloudStatus("Loading private drive…");
+                try {
+                    await cloudLoad();
+                    cloudStatus("Private cloud · synced")
+                } catch (e) {
+                    console.error("Could not load the private cloud drive; using this account's local copy.", e);
+                    cloudSyncAvailable = false;
+                    cloudStatus(/linkdrive_user_data|schema cache|PGRST205/i.test(e.message || "") ? "Local only · database setup needed" : "Local only · cloud unavailable");
+                    toast(/linkdrive_user_data|schema cache|PGRST205/i.test(e.message || "") ?
+                        "Login succeeded. Run supabase_setup.sql to enable cloud sync; for now, changes save in this browser." :
+                        "Login succeeded, but cloud is unavailable. Changes save in this browser.")
+                }
+                document.body.classList.remove("auth-mode");
+                document.getElementById("sessionUser").textContent = AUTH.session.user.email || "";
+                S.page = "home";
+                render()
+            }
+            async function initialize() {
+                authMode("signin");
+                showAuth();
+                if (window.location.protocol === "file:") {
+                    setAuthMessage("This page is opened as a local file. Start it with VS Code Live Server or deploy it to an HTTP/HTTPS website.");
+                    document.getElementById("authSubmit").disabled = true;
+                    document.getElementById("authToggle").disabled = true;
+                    return
+                }
+                if (!cloudReady()) {
+                    setAuthMessage("Supabase setup is invalid. Use your project's HTTPS URL and public anon/publishable key.");
+                    document.getElementById("authSubmit").disabled = true;
+                    document.getElementById("authToggle").disabled = true;
+                    return
+                }
+                try {
+                    var saved = localStorage.getItem(AUTH_KEY);
+                    if (!saved) return;
+                    AUTH.session = JSON.parse(saved);
+                    if (!AUTH.session || !AUTH.session.refresh_token || !AUTH.session.user) throw new Error("Saved sign-in is invalid.");
+                    if (!AUTH.session.expires_at || AUTH.session.expires_at < Date.now() + 60000) await refreshSession();
+                    else await authRequest("/auth/v1/user", "GET", null, AUTH.session.access_token);
+                    try {
+                        await enterPrivateDrive()
+                    } catch (e) {
+                        console.error("Could not load the private cloud drive.", e);
+                        setAuthMessage(cloudErrorMessage(e))
+                    }
+                } catch (e) {
+                    console.error("Could not restore the sign-in session.", e);
+                    clearSession();
+                    setAuthMessage("Your sign-in expired. Please sign in again.")
+                }
+            }
+            initialize();
+        })();
+    </script>
+</body>
+
+</html>
